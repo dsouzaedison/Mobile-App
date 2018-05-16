@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { Component } from 'react';
 import { AsyncStorage, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
@@ -6,51 +5,12 @@ import { getTopHomes } from '../../../utils/requester';
 import DateAndGuestPicker from '../../organisms/DateAndGuestPicker';
 import SearchBar from '../../molecules/SearchBar';
 import SmallPropertyTile from '../../molecules/SmallPropertyTile';
-
+import SplashScreen from 'react-native-smart-splash-screen';
+import Image from 'react-native-remote-svg';
+import styles from './styles';
 
 // TODO: move styles in separate file
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-        backgroundColor: '#f0f1f3'
-    },
-    searchAreaView: {
-        width: '100%',
-        height: 105,
-        backgroundColor: '#273842',
-        paddingTop: 40,
-        paddingLeft: 17,
-        paddingRight: 17
-    },
-    sectionView: {
-        width: '100%',
-        paddingLeft: 17,
-        paddingRight: 17
-    },
-    subtitleView: {
-        width: '100%',
-        paddingTop: 18,
-        paddingBottom: 5,
-        borderBottomWidth: 0.5,
-        borderColor: '#d7d8d8'
-    },
-    subtitleText: {
-        fontSize: 16,
-        fontFamily: 'FuturaStd-Light'
-    },
-    tilesView: {
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between'
-    },
-    text: {
-        color: '#000'
-    }
-});
+
 
 
 class Explore extends Component {
@@ -63,18 +23,28 @@ class Explore extends Component {
     static defaultProps = {
         navigation: {
             navigate: () => {}
-        },
-        search: '',
-        checkInDate: '',
-        checkOutDate: '',
-        guests: 0,
-        topHomes: [],
-        onDatesSelect: () => {},
-        onSearchChange: () => {}
+        }
     }
     constructor(props) {
         super(props);
-        this.onSearchHandler = this.onSearchHandler.bind(this);
+        this.onChangeHandler = this.onChangeHandler.bind(this);
+        this.state = {
+            search: '',
+            checkInDate: 'Thu, 25 Jan',
+            checkOutDate: 'Sat, 27 Jan',
+            guests: 0,
+            topHomes: null
+        };
+    }
+
+    componentWillMount(){
+        //Remove Splash
+        console.disableYellowBox = true;
+        SplashScreen.close({
+            animationType: SplashScreen.animationType.scale,
+            duration: 0,
+            delay: 0,
+        })
     }
 
     componentDidMount() {
@@ -84,8 +54,10 @@ class Explore extends Component {
         });
     }
 
-    onSearchHandler(value) {
-        this.props.onSearchChange(value);
+    onChangeHandler(property) {
+        return (value) => {
+            this.setState({ [property]: value });
+        };
     }
 
     renderHomes() {
@@ -106,8 +78,8 @@ class Explore extends Component {
 
     render() {
         const {
-             search, checkInDate, checkOutDate, guests, topHomes, onDatesSelect
-        } = this.props;
+            search, checkInDate, checkOutDate, guests, topHomes
+        } = this.state;
 
         return (
             <View style={styles.container}>
@@ -115,22 +87,36 @@ class Explore extends Component {
                     <SearchBar
                         autoCorrect={false}
                         value={search}
-                        onChangeText={this.onSearchHandler}
+                        onChangeText={this.onChangeHandler('search')}
                         placeholder="Discover your next experience"
-                        placeholderTextColor="#bdbdbd"
+                        placeholderTextColor="#767678"
                         leftIcon="search"
                     />
                 </View>
 
-                <ScrollView showsHorizontalScrollIndicator={false} style={{ width: '100%' }}>
-                    <DateAndGuestPicker
-                        checkInDate={checkInDate}
-                        checkOutDate={checkOutDate}
-                        guests={guests}
-                        onDatesSelect={onDatesSelect}
-                    />
-                    { topHomes.length ? this.renderHomes() : null }
-                </ScrollView>
+                <View style={styles.section1}>
+                    <View style={styles.dateView}>
+                    <TouchableOpacity style={styles.btnCheckInDate}><Text style={styles.btn_text}>Check In</Text><Text style={styles.btn_subtext}>SelectDate</Text></TouchableOpacity>
+                    <View style={styles.betweenButtons}></View>
+                    <TouchableOpacity style={styles.btnCheckOutDate}><Text style={styles.btn_text}>Check Out</Text><Text style={styles.btn_subtext}>-----</Text></TouchableOpacity>
+                    </View>
+                    <TouchableOpacity style={styles.btnGuests}><Text style={styles.btn_text}>Guests</Text><Text style={styles.btn_subtext}>------</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.btnSettings}><Image style={styles.btn_SettingImages} source={require('../../../../src/assets/svg/filters.svg')} /></TouchableOpacity>
+                </View>
+
+                    <TouchableOpacity style={styles.btnSearch}><Text style={styles.searchText}>Search</Text></TouchableOpacity>
+                {/* <ScrollView showsHorizontalScrollIndicator={false} style={{ width: '100%' }}>
+                    <DateAndGuestPicker checkInDate={checkInDate} checkOutDate={checkOutDate} guests={guests} />
+                    { topHomes ? this.renderHomes() : null }
+                </ScrollView> */}
+
+                {/* <TouchableOpacity onPress={() => {
+                    AsyncStorage.getAllKeys().then(keys => AsyncStorage.multiRemove(keys));
+                    this.props.navigation.navigate('Login');
+                }}
+                >
+                    <Text style={styles.text}>Log Out</Text>
+                </TouchableOpacity> */}
             </View>
         );
     }

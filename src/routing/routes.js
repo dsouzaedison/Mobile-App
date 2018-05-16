@@ -6,11 +6,15 @@ import Welcome from '../components/screens/Welcome';
 import Login from '../components/screens/Login';
 import CreateAccount from '../components/screens/CreateAccount';
 import CreatePassword from '../components/screens/CreatePassword';
-import Terms from '../components/templates/Terms';
+import Terms from '../components/screens/Terms';
+import Chat from '../components/screens/Message/Chat';
 
+import Inbox from '../components/screens/Message/Inbox';
+import Profile from '../components/screens/Profile/index';
+import Favourites from '../components/screens/Favorites/index';
+import MyTrips from '../components/screens/MyTrips/index';
 import Explore from '../components/screens/Explore';
 import NavTabBar from '../components/organisms/NavTabBar';
-import Profile from '../components/screens/Profile';
 
 
 export const LoginNavigator = StackNavigator(
@@ -19,7 +23,9 @@ export const LoginNavigator = StackNavigator(
         Login: { screen: Login },
         CreateAccount: { screen: CreateAccount },
         CreatePassword: { screen: CreatePassword },
-        Terms: { screen: Terms }
+        Terms: { screen: Terms },
+        Chat: { screen: Chat },
+        Inbox: { screen: Inbox },
     },
     {
         initialRouteName: 'Welcome',
@@ -30,9 +36,9 @@ export const LoginNavigator = StackNavigator(
 export const MainNavigator = TabNavigator(
     {
         PROFILE: { screen: Profile },
-        MESSAGES: { screen: Explore },
-        MY_TRIPS: { screen: Explore },
-        FAVORITES: { screen: Explore },
+        MESSAGES: { screen: Inbox },
+        MY_TRIPS: { screen: MyTrips },
+        FAVORITES: { screen: Favourites },
         EXPLORE: { screen: Explore }
     },
     {
@@ -49,6 +55,6 @@ export const AppNavigator = SwitchNavigator(
         App: MainNavigator
     },
     {
-        initialRouteName: 'AppLoading'
+        initialRouteName: 'App'
     }
 );

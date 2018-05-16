@@ -1,15 +1,15 @@
-import { SELECT_CHECK_IN_CHECK_OUT, SEARCH_VALUE } from './actionTypes';
+import { paymentInfo } from './actionTypes';
 
-export function selectCheckInCheckout({ startDate, endDate }) {
+export function setCurrency(currency) {
     return {
-        type: SELECT_CHECK_IN_CHECK_OUT,
-        params: { startDate, endDate }
+        type: paymentInfo.SET_CURRENCY,
+        currency
     };
 }
 
-export function setSearchValue({ value }) {
+export function setLocRate(locRate) {
     return {
-        type: SEARCH_VALUE,
-        params: { value }
+        type: paymentInfo.SET_LOC_RATE,
+        locRate
     };
 }

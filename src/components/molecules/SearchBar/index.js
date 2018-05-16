@@ -13,7 +13,8 @@ const styles = StyleSheet.create({
     },
     leftIconText: {
         color: '#5a5a5c',
-        fontSize: 20
+        fontSize: 20,
+        top:13
     },
     container: {
         display: 'flex',

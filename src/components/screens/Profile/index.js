@@ -1,222 +1,145 @@
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { AsyncStorage, Clipboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import styles from './styles';
 import Image from 'react-native-remote-svg';
-import FontAwesome, { Icons } from 'react-native-fontawesome';
-import { connect } from 'react-redux';
-import GoBack from '../../atoms/GoBack';
 
 class Profile extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-        walletAddress: '0x32Be343B94f860124dC4fEe278FDCBD38C102D855412'
+    constructor() {
+        super();
+        this.state = {
+            cardNumber: 'c1aba770da035e4de24b86e6342314f3',
+            balance: '0,035,974.23 LOC / $250',
+            links: [
+                {
+                    key: 0,
+                    name: 'View Profile',
+                    route: require('../../../assets/icons/switch.png'),
+                    icon: 'null'
+                },
+                {
+                    key: 1,
+                    name: 'Edit Profile',
+                    route: require('../../../assets/svg/edit-profile.svg'),
+                    icon: 'user'
+                },
+                {
+                    key: 2,
+                    name: 'Notifications',
+                    route: require('../../../assets/svg/notifications.svg'),
+                    icon: 'bell'
+                },
+                {
+                    key: 3,
+                    name: 'Payment Methods',
+                    route: require('../../../assets/svg/payment.svg'),
+                    icon: 'wallet'
+                },
+                {
+                    key: 4,
+                    name: 'Currency',
+                    route: require('../../../assets/icons/switch.png'),
+                    icon: 'null'
+                },
+                {
+                    key: 5,
+                    name: 'Switch to Hosting',
+                    route: require('../../../assets/svg/switch.svg'),
+                    icon: 'refresh'
+                },
+                {
+                    key: 6,
+                    name: 'Log Out',
+                    route: require('../../../assets/icons/switch.png'),
+                    icon: 'null'
+                }
+            ]
+        }
     }
-  }
 
-  componentDidMount() {
-  }
+    componentDidMount() {
 
-  render() {
-    const { navigate } = this.props.navigation;
-    // const { locAddress } = this.props.userInfo;
-    return (
-      <View style={styles.container}>
-        <GoBack
-            onPress={() => navigate('EXPLORE')}
-            icon="arrowLeft"
-            color="black"
-        />
-            
-        <ScrollView showsHorizontalScrollIndicator={false} style={{ width: '100%' }}>
-            <View style={styles.cardBox}>
-                <Image
-                    source={require('../../../assets/splash.png')}
-                    style={styles.logo} />
-                <View style={{width: '100%'}}>
-                    <Text style={styles.walletAddres}>{this.state.walletAddress}</Text>
-                </View>
-                <Text style={styles.balanceLabel}>Current Balance</Text>
-                <View style={{width: '100%'}}>
-                    <Text style={styles.balanceText}>5412.00 LOC / $24129</Text>
-                </View>
-                <Image
-                    source={require('../../../assets/splash.png')}
-                    style={styles.logoBackground} />
-                <View style={styles.addMore}>
-                    <FontAwesome style={styles.addMorePlus}>{Icons.plus}</FontAwesome>
-                </View>
+    }
+
+    _keyExtractor = (item, index) => item.key;
+
+    getIconJSX = (icon) => {
+        if(icon) {
+            if(icon === 'usd') {
+                console.log('sanan')
+                return <Text style={styles.usd}>USD</Text>
+            }
+            return console.log('sanan')
+            // return <Image source={require('../../../../src/assets/icons/notifications.png')} />;
+        }
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <TouchableOpacity onPress={this.onBackPress} style={styles.backButton}>
+                    <Image style={styles.btn_backImage} source={require('../../../../src/assets/svg/arrow-back.svg')} />
+                </TouchableOpacity>
+                <ScrollView>
+                    <View style={styles.cardContainer}>
+                        <View style={styles.card}>
+                            <View style={styles.transparentLogoWrapper}>
+                                <Image
+                                    style={styles.logoTransparent}
+                                    source={require('../../../assets/logo_white.png')}
+                                />
+                            </View>
+                            <View style={styles.cardFAB}>
+                                <Text style={styles.FAB}>+</Text>
+                            </View>
+                            <View style={styles.cardContentsWrapper}>
+                                <View style={styles.cardRowOne}>
+                                    <Image
+                                        style={styles.cardLogo}
+                                        source={require('../../../assets/logo_white.png')}
+                                    />
+                                </View>
+                                <View style={styles.cardRowTwo}>
+                                    <Text style={styles.cardNumber}>{this.state.cardNumber}</Text>
+                                </View>
+                                <View style={styles.cardRowThree}>
+                                    <Text style={styles.cardPropertyName}>Current Balance</Text>
+                                    <Text style={styles.cardBalance}>{this.state.balance}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.copyAddress}>
+                            <Text style={styles.copyAddressText}>Copy your wallet address to clipboard</Text>
+                        </View>
+                    </View>
+                    <FlatList
+                        data={this.state.links}
+                        keyExtractor={this._keyExtractor}
+                        renderItem={({item}) => {
+                            return (
+                                <View style={styles.listItem}>
+                                    <View style={styles.listItemNameWrapper}>
+                                        <Text style={styles.listItemText}>{item.name}</Text>
+                                    </View>
+                                    <View style={styles.listItemIconWrapper}>
+                                    <Image
+                                        style={item.icon !== 'null' && styles.menuIcons}
+
+                                        source={item.icon !== 'null' && item.route}
+                                    />
+                                    <Text style={styles.currencyText}>{item.icon === 'null' & item.name === 'Currency'? 'USD' : ''}</Text>
+                                    </View>
+                                </View>
+                            )
+                        }}
+                    />
+                </ScrollView>
             </View>
-            <TouchableOpacity onPress={() => { Clipboard.setString(this.state.walletAddress) }}>
-                <View style={styles.copyBox}>
-                    <Text style={styles.copyText}>Copy your wallet address to clipboard</Text>
-                </View>
-            </TouchableOpacity>
+        )
+    }
 
-            <View>
-                <TouchableOpacity onPress={() => navigate('ViewProfile')} style={styles.navItem}>
-                    <Text style={styles.navItemText}>View Profile</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('ViewProfile')} style={styles.navItem}>
-                    <Text style={styles.navItemText}>Edit Profile</Text>
-                    <Image resizeMode="stretch" source={require('../../../assets/svg/Profile/icon-user.svg')} style={styles.navIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('ViewProfile')} style={styles.navItem}>
-                    <Text style={styles.navItemText}>Notifications</Text>
-                    <Image resizeMode="stretch" source={require('../../../assets/svg/Profile/icon-bell.svg')} style={styles.navIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('ViewProfile')} style={styles.navItem}>
-                    <Text style={styles.navItemText}>Payment Methods</Text>
-                    <Image resizeMode="stretch" source={require('../../../assets/svg/Profile/icon-payment.svg')} style={styles.navIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('ViewProfile')} style={styles.navItem}>
-                    <Text style={styles.navItemText}>Currency</Text>
-                    <Text style={styles.navCurrency}>USD</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigate('ViewProfile')} style={styles.navItem}>
-                    <Text style={styles.navItemText}>Switch to Hosting</Text>
-                    <Image resizeMode="stretch" source={require('../../../assets/svg/Profile/icon-switch.svg')} style={styles.navIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                    AsyncStorage.getAllKeys().then(keys => AsyncStorage.multiRemove(keys));
-                    this.props.navigation.navigate('Login');
-                }} style={styles.navItem}>
-                    <Text style={styles.navItemText}>Log Out</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
-      </View>
-    );
-  }
+    onBackPress = () => {
+        this.props.navigation.navigate('EXPLORE');
+    }
 }
 
-Profile.propTypes = {
-  // start react-navigation props
-  navigation: PropTypes.object.isRequired
-};
-
 export default Profile;
-
-// function mapStateToProps(state) {
-//     const { paymentInfo, userInfo } = state;
-//     return {
-//         paymentInfo,
-//         userInfo
-//     };
-// }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    backgroundColor: '#f0f1f3'
-  },
-  text: {
-    color: '#000'
-  },
-  cardBox: {
-    backgroundColor: '#da7b60',
-    marginTop: 20,
-    marginLeft: 20,
-    marginRight: 20,
-    borderRadius: 10,
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    paddingTop: 5,
-    paddingBottom: 15
-  },
-  walletAddres: {
-    color: '#fff',
-    fontFamily: 'FuturaStd-Light',
-    fontSize: 11.5,
-    margin: 20,
-    marginTop: 10,
-    marginBottom: 30
-  },
-  logo: {
-      width: 80,
-      height: 55,
-      borderRadius: 10,
-      marginLeft: 10
-  },
-  logoBackground: {
-      position: 'absolute',
-      bottom: -5,
-      left: -35,
-      opacity: 0.1,
-      width: '60%',
-      height: '60%'
-  },
-  balanceLabel: {
-      fontSize: 10,
-      color: '#fff',
-      marginLeft: 20,
-      fontFamily: 'FuturaStd-Light'
-  },
-  balanceText: {
-      fontSize: 20,
-      color: '#fff',
-      marginLeft: 20,
-      fontFamily: 'FuturaStd-Light'
-  },
-  addMore: {
-      position: 'absolute',
-      bottom: 15,
-      right: 20,
-      width: 43,
-      height: 43,
-      borderRadius: 50,
-      backgroundColor: '#213742',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-  },
-  addMorePlus: {
-      color: '#fff',
-      fontSize: 16
-  },
-  copyBox: {
-      backgroundColor: '#fff',
-      marginLeft: 40,
-      marginRight: 40,
-      padding: 10,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10
-  },
-  copyText: {
-      fontFamily: 'FuturaStd-Light',
-      fontSize: 13,
-      color: '#000'
-  },
-  navItem: {
-      borderBottomWidth: 0.5,
-      borderColor: '#e2e4e3',
-      padding: 10,
-      paddingBottom: 20,
-      paddingTop: 20,
-      marginLeft: 10,
-      marginRight: 10,
-      display: 'flex',
-      justifyContent: 'space-between',
-      flexDirection: 'row'
-  },
-  navIcon: {
-    width: 20,
-    height: 23
-  },
-  navItemText: {
-    fontFamily: 'FuturaStd-Light',
-    fontSize: 17,
-  },
-  navCurrency: {
-      color: '#da7b60',
-      fontFamily: 'FuturaStd-Light',
-      fontSize: 18
-  }
-});

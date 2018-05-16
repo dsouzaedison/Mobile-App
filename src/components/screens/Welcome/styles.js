@@ -9,8 +9,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#DA7B61'
     },
     splashImage: {
-        width: 200,
-        height: 80
+        width: 80,
+        height: 58
     },
     buttonCollectionWrap: {
         display: 'flex',
@@ -24,8 +24,14 @@ const styles = StyleSheet.create({
         borderWidth: 1.5
     },
     facebookButton: {
-        backgroundColor: '#223843',
-        elevation: 3
+        backgroundColor: '#233842',
+        flexDirection: 'row',
+        height: 50,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // elevation: 3,
+        // flex: 1
     },
     createAccountButton: {
         marginTop: 20
@@ -38,12 +44,51 @@ const styles = StyleSheet.create({
     },
     finePrintText: {
         marginTop: 60,
-        marginLeft: 30,
-        marginRight: 30,
+        marginLeft: 10,
+        marginRight: 10,
         color: '#fff',
         fontSize: 13,
-        fontFamily: 'FuturaStd-Light',
-        textAlign: 'justify'
+        fontFamily: 'FuturaStd-Light'
+    },
+    lowOpacity: {
+        opacity: 0.3,
+        display: 'flex',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-end'
+    },
+    getStartedImage: {
+        width: 400,
+        height: 80
+    },
+    btn_facebookIcon:{
+        width: 8,
+        height: 18,
+        marginRight: 10,
+    },
+    facebookButtonText:{
+        color: '#fff'
+    },
+    appName: {
+        fontSize: 41,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginTop: 4
+    },
+    appNameLeft: {
+        marginRight: -8
+    },
+    appNameRight: {
+        marginLeft: -8
+    },
+    closeButtonWrapper: {
+        position: 'absolute',
+        left: 20,
+        top: 45
+    },
+    closeButton: {
+        width: 25,
+        height: 25
     }
 });
 
