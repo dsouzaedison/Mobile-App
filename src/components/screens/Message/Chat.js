@@ -4,19 +4,20 @@ import {
  Platform,
     Text,
     View,
+    AsyncStorage,
     FlatList,
     TextInput,
     KeyboardAvoidingView,
-    TouchableOpacity,
-    ToolbarAndroid,
-    Button
+    TouchableOpacity
 } from 'react-native';
+
+import { domainPrefix } from '../../../config';
 import Image from 'react-native-remote-svg';
-import FontAwesome, { Icons } from 'react-native-fontawesome';
 import ImagePicker from 'react-native-image-picker';
-import Requester, { getCurrencyRates, sendMessage } from '../../../utils/requester';
+import Requester, { getCurrencyRates, sendMessage, getChatMessages, getMyHeaders } from '../../../utils/requester';
 import styles from './styles';
 import SplashScreen from 'react-native-smart-splash-screen';
+import moment from 'moment';
 
 
 class Chat extends Component {
@@ -34,51 +35,51 @@ class Chat extends Component {
     }
 
     componentWillMount(){
-        //Remove Splash
+        // Remove Splash
+        console.disableYellowBox = true;
         SplashScreen.close({
             animationType: SplashScreen.animationType.scale,
             duration: 0,
-            delay: 0,
-        })
+            delay: 0
+        });
     }
 
     constructor(props) {
         super(props);
+        this.state = {
+            loading: false,
+            data: [],
+            page: 1,
+            seed: 1,
+            error: null,
+            refreshing: false,
+            myData : [],
+            messages : [],
+            name : 'Amad Khan Durrani'
+          };
     }
 
     componentDidMount() {
-        this.setState({
-
+        getChatMessages(67)
+        .then(res => res.response.json())
+        .then(parsed => {
+            console.log(parsed.content);
+            let messageDate = moment(parsed.content[0].createdAt, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY');
+            console.log(messageDate);
+            this.setState({
+                messages : parsed.content,
+                name : parsed.content[0].recipient.fullName
+            });
+        })
+        .catch(err => {
+            console.log(err);
         });
     }
+    
+
 
     render() {
         const { navigate } = this.props.navigation;
-        const dicti = [{
-            avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-            key: 'sender',
-            value: 'Hi Jaime! We are interseted in booking your place during our vacation . \nJesse',
-            field: 'ios',
-            date: '12 Jan'
-        },{
-            avatar_url: 'http://i0.kym-cdn.com/entries/icons/original/000/006/993/nickcage.jpg',
-            key: 'sender',
-            value: 'Hi Jaime! We are interseted in booking your place during our vacation . \nJesse',
-            field: 'android',
-            date: '15 Jan'
-        },{
-            avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-            key: 'sender',
-            value: 'Hi Jaime! We are interseted in booking your place during our vacation . \nJesse',
-            field: 'ios',
-            date: '15 Jan'
-        },{
-            avatar_url: 'http://i0.kym-cdn.com/entries/icons/original/000/006/993/nickcage.jpg',
-            key: 'sender',
-            value: 'Hi Jaime! We are interseted in booking your place during our vacation . \nJesse',
-            field: 'android',
-            date: '15 Jan'
-        },];
 
         return (
             <KeyboardAvoidingView style={styles.container} behavior={(Platform.OS === 'ios') ? 'padding' : null} enabled>
@@ -92,7 +93,7 @@ class Chat extends Component {
                 </View>
 
                 <View style={styles.requestView}>
-                    <Text style={styles.requestTo}>Conversation with Jesse</Text>
+                    <Text style={styles.requestTo}>{this.state.name}</Text>
                     <Text style={styles.requestTitle}>Garden Left Apartment</Text>
                     <View style={styles.dateWrapper}>
                         <Text style={styles.dateText}>Thu 25 Jan - Sat 27 Jan</Text>
@@ -113,32 +114,28 @@ class Chat extends Component {
                 </View>
 
                 <FlatList style={styles.listBg}
-                    data={dicti}// Data source
+                    data={this.state.messages}// Data source
                     renderItem={({ item }) =>
                         (
-                        <View>{/* Main View inside flat list */}
-
-                            <View style={item.field === 'ios' ? styles.rowStyle : styles.hiddenRow}>{/* User 1 View inside flat list */}
-                                <Image style={item.field === 'ios' && styles.imageStyle}
-                                source={{uri: item.avatar_url}}
-                                />
-                                <View style={item.field === 'ios' && styles.viewStyle}>
-                                <Text style={item.field === 'ios' && styles.listChild}>{item.field === 'ios' && item.value}</Text>
-                                <Text style={item.field === 'ios' && styles.listChild}>{item.field === 'ios' && item.date}</Text>
-                                </View>
+                        <View style={item.currentUserSender === true ? styles.rowStyle : styles.hiddenRow}>{/* User 1 View inside flat list */}
+                            
+                            <View style={item.currentUserSender === true  ? styles.rowStyle : styles.hiddenRow}>
+                            <Image style={item.currentUserSender === true  && styles.imageStyle}
+                            source={{uri: item.sender.image}}
+                            />
+                            <View style={item.currentUserSender === true && styles.viewStyle}>
+                            <Text style={item.currentUserSender === true && styles.listChild}>{item.message}</Text>
+                            <Text style={item.currentUserSender === true && styles.listChild}>{moment(item.createdAt, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY')}</Text>
                             </View>
-                            <View style={item.field === 'android' ? styles.rowStyleSender : styles.hiddenRow}>{/* User 2 View inside flat list */}
-                                <View style={item.field === 'android' && styles.viewStyleSender}>
-                                    <Text style={item.field === 'android' && styles.listChildSender}>{item.field === 'android' && item.value}</Text>
-                                    <Text style={item.field === 'android' && styles.listChildSender}>{item.field === 'android' && item.date}</Text>
-                                </View>
-                                <Image style={item.field === 'android' && styles.imageStyleSender}
-                                 source={{uri: item.avatar_url}}/>
-
+                        </View>
+                        <View style={item.field === 'android' ? styles.rowStyleSender : styles.hiddenRow}>{/* User 2 View inside flat list */}
+                            <View style={item.field === 'android' && styles.viewStyleSender}>
+                                <Text style={item.field === 'android' && styles.listChildSender}>{item.field === 'android' && item.value}</Text>
+                                <Text style={item.field === 'android' && styles.listChildSender}>{item.field === 'android' && item.date}</Text>
                             </View>
-
-
-
+                            <Image style={item.field === 'android' && styles.imageStyleSender}
+                                source={{uri: item.avatar_url}}/>
+                        </View>
                         </View>
                         )
                     }
@@ -192,11 +189,45 @@ class Chat extends Component {
         });
     }
     onBackPress = () => {
-        this.props.navigation.navigate('MESSAGES');
+        // getMyHeaders().then( response => {
+        //     console.log(response);
+        // })
+        // .catch(function(error){
+        //     console.log(error);
+        // })
+        
+        // try {
+        //     const value = AsyncStorage.getItem(`${domainPrefix}.auth.lockchain`);
+        //     if (value !== null){
+        //       // We have data!!
+        //       console.log(value);
+        //     }
+        //   } catch (error) {
+        //     console.log(error);
+        //   }
+        
+        // getMyConversations(67).then(res => {
+        //     console.log(res.response.parse());
+        // }).catch(function(error){
+        //     console.log(error);
+        // });
+        // let m = {
+        //     recipient : 597,
+        //     message: 'Hello how are you'
+        // };
+        // sendMessage(m,67)
+        // .then(response => {
+        //     console.log(response)
+        // })
+        // .catch(function(error){
+        //     console.log(`Error: ${error}`);
+        // })
+        // this.props.navigation.navigate('MESSAGES');
     }
 
     sendMessage = () => {
-        sendMessage('amad',17)
+        
+        sendMessage('Abhi',597)
         .then(response => {
             console.log(response)
         })

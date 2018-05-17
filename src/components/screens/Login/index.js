@@ -11,7 +11,6 @@ import {
 import Image from 'react-native-remote-svg';
 import { autobind } from 'core-decorators';
 
-import GoBack from '../../atoms/GoBack';
 import SmartInput from '../../atoms/SmartInput';
 import { domainPrefix } from '../../../config';
 import { validateEmail, validatePassword } from '../../../utils/validation';
@@ -32,13 +31,13 @@ class Login extends Component {
         email: '',
         password: ''
     }
-
+    
     componentDidMount() {
         SplashScreen.close({
             animationType: SplashScreen.animationType.scale,
             duration: 850,
-            delay: 500,
-        })
+            delay: 500
+        });
     }
 
     // TODO: Need a way to generate a Google ReCAPTCHA token

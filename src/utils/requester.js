@@ -14,6 +14,7 @@ async function getHeaders(headers = null) {
 
     try {
         const value = await AsyncStorage.getItem(`${domainPrefix}.auth.lockchain`);
+        console.log(value);
         if (value !== null) {
             headers.Authorization = value;
         }
@@ -32,7 +33,11 @@ async function sendRequest(endpoint, method, postObj = null, captchaToken = null
     const allHeaders = getHeaders(headers);
 
     const getParams = {
-        headers: getHeaders()
+        headers: {
+            'Authorization': await AsyncStorage.getItem(`${domainPrefix}.auth.lockchain`),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
     };
 
     const postParams = {
@@ -68,7 +73,7 @@ async function sendRequest(endpoint, method, postObj = null, captchaToken = null
                 return {
                     response: res.json().then((r) => {
                         if (r.errors && r.errors.ExpiredJwt) {
-                            AsyncStorage.multiRemove([`${domainPrefix}.auth.lockchain`, `${domainPrefix}.auth.username`]);
+                            //AsyncStorage.multiRemove([`${domainPrefix}.auth.lockchain`, `${domainPrefix}.auth.username`]);
                             if (onLogOut) onLogOut();
                         }
                         return r;
@@ -110,9 +115,15 @@ export async function getPropertyById(id) {
     return sendRequest(`${host}listings/${id}`, RequestMethod.GET).then(res => res.response.json());
 }
 
-export async function getMyConversations(searchTerm) {
-    return sendRequest(`${host}users/me/conversations${searchTerm !== null && searchTerm !== undefined ? `${searchTerm}&` : '?'}sort=id,desc`, RequestMethod.GET).then(res => {
-        return res.response.json();
+export async function getMyConversations(id) {
+    return sendRequest(`${host}users/me/conversations/${id}`, RequestMethod.GET).then(res => {
+        return res;
+    });
+}
+
+export async function getChatMessages(id, page = 0) {
+    return sendRequest(`${host}users/me/conversations/${id}?page=${page}`, RequestMethod.GET).then(res => {
+        return res;
     });
 }
 

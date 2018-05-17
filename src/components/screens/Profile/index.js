@@ -53,7 +53,7 @@ class Profile extends Component {
                     icon: 'null'
                 }
             ]
-        }
+        };
     }
 
     componentDidMount() {
@@ -63,12 +63,12 @@ class Profile extends Component {
     _keyExtractor = (item, index) => item.key;
 
     getIconJSX = (icon) => {
-        if(icon) {
-            if(icon === 'usd') {
-                console.log('sanan')
-                return <Text style={styles.usd}>USD</Text>
+        if (icon) {
+            if (icon === 'usd') {
+                console.log('sanan');
+                return <Text style={styles.usd}>USD</Text>;
             }
-            return console.log('sanan')
+            return console.log('sanan');
             // return <Image source={require('../../../../src/assets/icons/notifications.png')} />;
         }
     }
@@ -114,8 +114,7 @@ class Profile extends Component {
                     <FlatList
                         data={this.state.links}
                         keyExtractor={this._keyExtractor}
-                        renderItem={({item}) => {
-                            return (
+                        renderItem={({ item }) => (
                                 <View style={styles.listItem}>
                                     <View style={styles.listItemNameWrapper}>
                                         <Text style={styles.listItemText}>{item.name}</Text>
@@ -129,12 +128,11 @@ class Profile extends Component {
                                     <Text style={styles.currencyText}>{item.icon === 'null' & item.name === 'Currency'? 'USD' : ''}</Text>
                                     </View>
                                 </View>
-                            )
-                        }}
+                            )}
                     />
                 </ScrollView>
             </View>
-        )
+        );
     }
 
     onBackPress = () => {
