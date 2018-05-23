@@ -15,7 +15,8 @@ import Favourites from '../components/screens/Favorites/index';
 import MyTrips from '../components/screens/MyTrips/index';
 import Explore from '../components/screens/Explore';
 import NavTabBar from '../components/organisms/NavTabBar';
-
+import RoomDetailsReview from '../components/screens/RoomDetailsReview';
+import GuestInfoForm from '../components/screens/GuestInfoForm';
 
 export const LoginNavigator = StackNavigator(
     {
@@ -25,7 +26,8 @@ export const LoginNavigator = StackNavigator(
         CreatePassword: { screen: CreatePassword },
         Terms: { screen: Terms },
         Chat: { screen: Chat },
-        Inbox: { screen: Inbox },
+        RoomDetailsReview: { screen: RoomDetailsReview },
+        GuestInfoForm: { screen: GuestInfoForm }
     },
     {
         initialRouteName: 'Welcome',

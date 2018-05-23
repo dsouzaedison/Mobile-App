@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Text, TouchableWithoutFeedback, View, Image } from 'react-native';
+import { Text, TouchableWithoutFeedback, View } from 'react-native';
+import Image from 'react-native-remote-svg';
 import FontAwesome, { Icons } from 'react-native-fontawesome';
 import PropTypes from 'prop-types';
 import styles from './styles';
@@ -56,9 +57,9 @@ export default class NavTabBar extends Component {
                             <FontAwesome>{Icons.userO}</FontAwesome>
                         </Text> */}
 
-                        <Image style={{width: '50%',height: '40%',alignItems: 'center',position: 'relative',margin: 0,}} 
-                        source={active === 'PROFILE' ? require('../../../assets/tab-icon/profile-icon-colored.png') 
-                        : require('../../../assets/tab-icon/profile-icon.png')} />
+                        <Image style={{height: 25, width: 25}}
+                        source={active === 'PROFILE' ? require('../../../assets/svg/NavBar/active/profile-active.svg')
+                        : require('../../../assets/svg/NavBar/profile.svg')} />
                         <Text style={active === 'PROFILE' ? styles.activeTextStyle : styles.inactiveTextStyle}>
               PROFILE
                         </Text>
@@ -67,9 +68,9 @@ export default class NavTabBar extends Component {
 
                 <TouchableWithoutFeedback onPress={() => navigate('MESSAGES')}>
                     <View style={styles.tab}>
-                    <Image style={{width: '60%',height: '40%',alignItems: 'center',position: 'relative',margin: 0,}} 
-                        source={active === 'MESSAGES' ? require('../../../assets/tab-icon/message-icon-colored.png') 
-                        : require('../../../assets/tab-icon/message-icon.png')} />
+                    <Image style={{height: 25, width: 25}}
+                        source={active === 'MESSAGES' ? require('../../../assets/svg/NavBar/active/message-active.svg')
+                        : require('../../../assets/svg/NavBar/messages.svg')} />
                         {/* <Text style={active === 'MESSAGES' ? styles.activeIconStyle : styles.inactiveIconStyle}>
                             <FontAwesome>{Icons.commentingO}</FontAwesome>
                         </Text> */}
@@ -81,9 +82,9 @@ export default class NavTabBar extends Component {
 
                 <TouchableWithoutFeedback onPress={() => navigate('MY_TRIPS')}>
                     <View style={styles.tab}>
-                    <Image style={{width: '90%',height: '40%',alignItems: 'center',position: 'relative',margin: 0,}} 
-                        source={active === 'MY_TRIPS' ? require('../../../assets/tab-icon/trip-icon-colored.png') 
-                        : require('../../../assets/tab-icon/trip-icon.png')} />
+                    <Image style={{height: 30, width: 30}}
+                        source={active === 'MY_TRIPS' ? require('../../../assets/svg/NavBar/active/trips-active.svg')
+                        : require('../../../assets/svg/NavBar/trip.svg')} />
                         {/* <Text style={active === 'MY_TRIPS' ? styles.activeIconStyle : styles.inactiveIconStyle}>
                             <FontAwesome>{Icons.suitcase}</FontAwesome>
                         </Text> */}
@@ -95,9 +96,9 @@ export default class NavTabBar extends Component {
 
                 <TouchableWithoutFeedback onPress={() => navigate('FAVORITES')}>
                     <View style={styles.tab}>
-                    <Image style={{width: '60%',height: '40%',alignItems: 'center',position: 'relative',margin: 0,}} 
-                        source={active === 'FAVORITES' ? require('../../../assets/tab-icon/ratng-transparent-star-colored.png') 
-                        : require('../../../assets/tab-icon/ratng-transparent-star.png')} />
+                    <Image style={{height: 25, width: 25}}
+                        source={active === 'FAVORITES' ? require('../../../assets/svg/NavBar/active/favorite-active.svg')
+                        : require('../../../assets/svg/NavBar/favorites.svg')} />
                         {/* <Text style={active === 'FAVORITES' ? styles.activeIconStyle : styles.inactiveIconStyle}>
                             <FontAwesome>{Icons.heartO}</FontAwesome>
                         </Text> */}
@@ -109,9 +110,9 @@ export default class NavTabBar extends Component {
 
                 <TouchableWithoutFeedback onPress={() => navigate('EXPLORE')}>
                     <View style={styles.tab}>
-                    <Image style={{width: '70%',height: '40%',alignItems: 'center',position: 'relative',margin: 0,}} 
-                        source={active === 'EXPLORE' ? require('../../../assets/tab-icon/search-icon-colored.png') 
-                        : require('../../../assets/tab-icon/search-icon.png')} />
+                    <Image style={{height: 25, width: 25}}
+                        source={active === 'EXPLORE' ? require('../../../assets/svg/NavBar/active/explore-active.svg')
+                        : require('../../../assets/svg/NavBar/explore.svg')} />
                         {/* <Text style={active === 'EXPLORE' ? styles.activeIconStyle : styles.inactiveIconStyle}>
                             <FontAwesome>{Icons.search}</FontAwesome>
                         </Text> */}

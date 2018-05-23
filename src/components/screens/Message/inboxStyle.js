@@ -164,5 +164,10 @@ const styles = StyleSheet.create({
           borderRadius: 10 / 2,
           backgroundColor: '#cc8068',
       },
+      backButton:{
+          marginTop: 45,
+          marginLeft: 15,
+          marginBottom: 0
+        }
 });
 export default styles;

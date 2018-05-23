@@ -10,7 +10,6 @@ import {
     KeyboardAvoidingView,
     TouchableOpacity
 } from 'react-native';
-
 import { domainPrefix } from '../../../config';
 import Image from 'react-native-remote-svg';
 import ImagePicker from 'react-native-image-picker';
@@ -19,12 +18,15 @@ import styles from './styles';
 import SplashScreen from 'react-native-smart-splash-screen';
 import moment from 'moment';
 
+//import Message View for chat
+import MessageView from './MessageView';
 
 class Chat extends Component {
 
     static propTypes = {
         navigation: PropTypes.shape({
-            navigate: PropTypes.func
+            navigate: PropTypes.func,
+            
         })
     }
 
@@ -53,19 +55,21 @@ class Chat extends Component {
             seed: 1,
             error: null,
             refreshing: false,
-            myData : [],
             messages : [],
-            name : 'Amad Khan Durrani'
+            name : '',
           };
     }
 
     componentDidMount() {
-        getChatMessages(67)
+        // here is the method to load all chats related to this id = 68
+        getChatMessages(68)
         .then(res => res.response.json())
+        // here you set the response in to json 
         .then(parsed => {
-            console.log(parsed.content);
+            // here you parse your json
             let messageDate = moment(parsed.content[0].createdAt, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY');
-            console.log(messageDate);
+            // messageDate to set your date
+            // here you set you data from json into your variables
             this.setState({
                 messages : parsed.content,
                 name : parsed.content[0].recipient.fullName
@@ -80,18 +84,17 @@ class Chat extends Component {
 
     render() {
         const { navigate } = this.props.navigation;
-
         return (
             <KeyboardAvoidingView style={styles.container} behavior={(Platform.OS === 'ios') ? 'padding' : null} enabled>
-
                 <View style={styles.chatToolbar}>
-
+                {/* back button is define here start*/}
                 <TouchableOpacity onPress={this.onBackPress} style={{marginTop: 45, marginLeft: 15, marginBottom: 0}}>
                     <Image style={styles.btn_backImage} source={require('../../../../src/assets/svg/arrow-back.svg')} />
                 </TouchableOpacity>
-
+                {/* back button is define here end*/}
                 </View>
 
+                {/* Here is the top section view where all the details are related to the receiver start*/}
                 <View style={styles.requestView}>
                     <Text style={styles.requestTo}>{this.state.name}</Text>
                     <Text style={styles.requestTitle}>Garden Left Apartment</Text>
@@ -102,6 +105,7 @@ class Chat extends Component {
                         <SeparatorDot height={26} width={15}/>
                         <Text style={styles.price}>$615 </Text>
                     </View>
+                    {/* This view contain 2 buttons Approve and Decline start */}
                     <View style={styles.requestButtonView}>
                         <TouchableOpacity style={styles.btn_requestapproveView}>
                             <Text style={styles.btn_requestapprove}>Approve</Text>
@@ -109,63 +113,42 @@ class Chat extends Component {
                         <TouchableOpacity style={styles.btn_requestdeclineView}>
                             <Text style={styles.btn_requestdecline}>Decline</Text>
                         </TouchableOpacity>
-
                     </View>
+                    {/* This view contain 2 buttons Approve and Decline end */}
                 </View>
+                {/* Here is the top section view where all the details are related to the receiver end*/}
 
-                <FlatList style={styles.listBg}
+                {/* Here is the flatlist where all the message are going to be set start */}
+                <FlatList inverted style={styles.listBg}
                     data={this.state.messages}// Data source
                     renderItem={({ item }) =>
                         (
-                        <View style={item.currentUserSender === true ? styles.rowStyle : styles.hiddenRow}>{/* User 1 View inside flat list */}
-                            
-                            <View style={item.currentUserSender === true  ? styles.rowStyle : styles.hiddenRow}>
-                            <Image style={item.currentUserSender === true  && styles.imageStyle}
-                            source={{uri: item.sender.image}}
-                            />
-                            <View style={item.currentUserSender === true && styles.viewStyle}>
-                            <Text style={item.currentUserSender === true && styles.listChild}>{item.message}</Text>
-                            <Text style={item.currentUserSender === true && styles.listChild}>{moment(item.createdAt, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY')}</Text>
-                            </View>
-                        </View>
-                        <View style={item.field === 'android' ? styles.rowStyleSender : styles.hiddenRow}>{/* User 2 View inside flat list */}
-                            <View style={item.field === 'android' && styles.viewStyleSender}>
-                                <Text style={item.field === 'android' && styles.listChildSender}>{item.field === 'android' && item.value}</Text>
-                                <Text style={item.field === 'android' && styles.listChildSender}>{item.field === 'android' && item.date}</Text>
-                            </View>
-                            <Image style={item.field === 'android' && styles.imageStyleSender}
-                                source={{uri: item.avatar_url}}/>
-                        </View>
-                        </View>
+                            <MessageView
+                                isCurrentUser = {item.currentUserSender}
+                                sender={item.sender.email === AsyncStorage.getItem(`${domainPrefix}.auth.username`)}
+                                message={item}>
+                            </MessageView>
+                        
                         )
                     }
                 />
+                {/* Here is the flatlist where all the message are going to be set end */}
 
-
+                {/* This section contain the bottom area where you can write your message and send image from gallery or camera start */}
                 <View style={styles.footerView}>{/* Footer View for sending message etc */}
-
-                    <TextInput
-                                                style={styles.footerInputText}
+                    <TextInput style={styles.footerInputText}
                         underlineColorAndroid="rgba(0,0,0,0)" // Removing android underline for default edittext
-                        placeholder="Write message"
-                        // onChangeText={(text) => this.setState({text})} for future
-                        // value={this.state.text} for future
-                    />
-
+                        placeholder="Write message"/>
+                        {/* camera button is here */}
                     <TouchableOpacity onPress={this.onCameraPress}>
-
                         <Image style={styles.btn_cameraImage} source={require('../../../../src/assets/camera.png')} />
-
                     </TouchableOpacity>
-
+                    {/* gallery button is here */}
                     <TouchableOpacity onPress={this.onGalleryPress}>
-
                         <Image style={styles.btn_galleryImage} source={require('../../../../src/assets/gallery.png')} />
-
                     </TouchableOpacity>
-
                 </View>
-
+                {/* This section contain the bottom area where you can write your message and send image from gallery or camera end */}
             </KeyboardAvoidingView>// Ending Main View
         );
     }
@@ -189,40 +172,7 @@ class Chat extends Component {
         });
     }
     onBackPress = () => {
-        // getMyHeaders().then( response => {
-        //     console.log(response);
-        // })
-        // .catch(function(error){
-        //     console.log(error);
-        // })
-        
-        // try {
-        //     const value = AsyncStorage.getItem(`${domainPrefix}.auth.lockchain`);
-        //     if (value !== null){
-        //       // We have data!!
-        //       console.log(value);
-        //     }
-        //   } catch (error) {
-        //     console.log(error);
-        //   }
-        
-        // getMyConversations(67).then(res => {
-        //     console.log(res.response.parse());
-        // }).catch(function(error){
-        //     console.log(error);
-        // });
-        // let m = {
-        //     recipient : 597,
-        //     message: 'Hello how are you'
-        // };
-        // sendMessage(m,67)
-        // .then(response => {
-        //     console.log(response)
-        // })
-        // .catch(function(error){
-        //     console.log(`Error: ${error}`);
-        // })
-        // this.props.navigation.navigate('MESSAGES');
+        this.props.navigation.navigate('MESSAGES');
     }
 
     sendMessage = () => {
@@ -245,5 +195,6 @@ function SeparatorDot(props) {
         </View>
     )
 }
+
 
 export default Chat;

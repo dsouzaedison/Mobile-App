@@ -135,9 +135,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '100'
     },
-    backButton: {
-        marginLeft: 10,
-        marginBottom: 40
+    backButton:{
+        marginTop: 45,
+        marginLeft: 15,
+        marginBottom: 0
     },
     backButtonIcon: {
         fontSize: 22

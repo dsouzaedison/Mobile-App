@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
         fontFamily: 'FuturaStd-Light',
         fontSize: 18,
         color: '#fff'
-    }
+    },
 });
+
 export default styles;

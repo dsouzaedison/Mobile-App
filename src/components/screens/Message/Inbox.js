@@ -1,176 +1,108 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView  } from 'react-native';
-import Image from 'react-native-remote-svg';
-import FontAwesome, { Icons } from 'react-native-fontawesome';
-//import Image from 'react-native-remote-svg';
-//import GoBack from '../common/GoBack';
-import { ListView  } from 'react-native';
+import React, {Component} from 'react';
+import {
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    Image,
+    ScrollView,
+    FlatList
+} from 'react-native';
+import FontAwesome, {Icons} from 'react-native-fontawesome';
+import {imgHost} from '../../../config'
+// import Image from 'react-native-remote-svg'; import GoBack from
+// '../common/GoBack';
+import {ListView} from 'react-native';
 import SplashScreen from 'react-native-smart-splash-screen';
-import { getMyConversations, approveMessage, declineMessage } from '../../../utils/requester';
+import {getMyConversations, approveMessage, declineMessage} from '../../../utils/requester';
+import InboxMessagesView from './InboxMessagesView';
+
+// You will find all component related to style in this class
 import styles from './inboxStyle';
 
-const inbox = [
-        {user: "Jesse", status: "Confirmed", time: "10:05 am", date: "Thu 25 Jan - Sat 27 Jan", venue: "Garden Laft Apartment", message: "Hi Jaime! I am going to be arriving in Florence on Thursday arround noon. Looking forward to meeting you! Jesse"},
-        {user: "Taylor", status: "Discussion", time: "8:15 am", date: "Sat 3 Feb - Web 7 Feb", venue: "Crazy Bright Studio Apartment", message: "Hi Jaime! I am going to be arriving in Florence on Thursday arround noon. Looking forward to meeting you! Jesse"},
-        {user: "Jeniffer", status: "Review", time: "Yesterday", date: "13 days left to review", venue: "Lovely City Center Apartment"}
-    ]
-
 class Inbox extends Component {
-    //navigation props
-    static propTypes = {
-        navigation: PropTypes.shape({
-            navigate: PropTypes.func
-        })
-    }
 
-    static defaultProps = {
-        navigation: {
-            navigate: () => {}
-        }
-    }
-
-    //TODO: We have to change type of list view to flat list
     constructor(props) {
         super(props);
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            dataSource: inbox,
-        };
-    }
-
-    //Getting conversations
-    getMyConversations = () => {
-        getMyConversations()
-            .then(res => {
-                if(res) {
-                    this.setState({
-                        dataSource: res
-                    });
-                }
-            })
-            .catch(e => console.log(e));
-    }
-
-    //approving message
-    approveMessage = (id) => {
-        approveMessage(id)
-            .then(res => {
-                //Show success message
-            })
-            .catch(e => console.log(e));
-    }
-
-    //declining message
-    declineMessage = (id) => {
-        declineMessage(id)
-            .then(res => {
-                if(res) {
-                    //Show success message
-                }
-            })
-            .catch(e => console.log(e));
+            loading: false,
+            data: [],
+            page: 1,
+            seed: 1,
+            error: null,
+            refreshing: false,
+            inboxMessages : []
+          };
     }
 
     componentDidMount() {
-        // this.getMyConversations();
-
-        SplashScreen.close({
-            animationType: SplashScreen.animationType.scale,
-            duration: 850,
-            delay: 500,
+        // here is the method to load all chats related to this id = 68
+        getMyConversations()
+        .then(res => res.response.json())
+        // here you set the response in to json 
+        .then(parsed => {
+            // here you parse your json
+            // let messageDate = moment(parsed.content[0].createdAt, 'DD/MM/YYYY HH:mm:ss').format('DD/MM/YYYY');
+            // messageDate to set your date
+            // here you set you data from json into your variables
+            this.setState({
+                inboxMessages : parsed.content,
+            });
         })
+        .catch(err => {
+            console.log(err);
+        });
     }
 
     render() {
-        const { navigate } = this.props.navigation;
+        const {navigate} = this.props.navigation;
         return (
+            <View style={styles.InboxView}>
+            {/* Main Container Start */}
 
-            <View style={styles.InboxView}>{/*Main container*/}
+                <TouchableOpacity onPress={this.onBackPress} style={styles.backButton}>
+                {/* Back Button Start */}
+                        {/* Back Button Icon */}
+                        <Image
+                            style={styles.btn_backImage}
+                            source={require('../../../../src/assets/icons/icon-back-black.png')}/> 
+                {/* Back Button End */}
+                </TouchableOpacity>
 
-                <View style={styles.chatToolbar}>{/*Toolbar container*/}
-                    <TouchableOpacity onPress={this.onBackPress} style={{marginTop: 45, marginLeft: 15, marginBottom: 20}}>
-                        <Image style={styles.btn_backImage} source={require('../../../../src/assets/svg/arrow-back.svg')} />
+                <View style={[styles.topText]}>
+                {/* Top Text Start */}
+                    <Text style={[styles.heading]}>Inbox</Text>
+                    <Text style={styles.subHeading}>You have 3 unread messages</Text>
+                {/* Top Text end */}
+                </View>
+                <FlatList data={this.state.inboxMessages} // Data source
+                // List Start
+                    renderItem={({item}) => (
+                    <TouchableOpacity style={[styles.tr]} onPress={() => navigate('Chat')}>
+                        {/* Press to go on chat screen start*/}
+                            <InboxMessagesView
+                                inboxMessage={item}>
+                            </InboxMessagesView>
+                        {/* Press to go on chat screen end*/}
                     </TouchableOpacity>
-                </View>{/*End of Toolbar container*/}
+                )
+                // List End
+                }/>
 
-                <ScrollView>{/*Scroll View container*/}{/*To be changed to flat list*/}
-
-                    <View style={styles.mainMenu}>
-                        <Text style={styles.heading}>Inbox</Text>
-                        <Text style={styles.subHeading}>You have 3 unread messages</Text>
-                    </View>
-
-                        <View style={styles.container}>
-                            {
-                                this.state.dataSource.map((item, index) => {
-                                    if(item.status !== "Review"){
-                                        return (
-                                            <TouchableOpacity style={[styles.tr]} key={index} onPress={()=> navigate('Chat')}>
-                                                <View style={styles.trTopView}>
-                                                    <View style={styles.trImgView}>
-                                                        <Image source={require('../../../assets/icons/receiverImage.png')} style={[styles.trAvatar]} resizeMode={"cover"}/>
-                                                    </View>
-                                                    <View style={[styles.messageBox]}>
-                                                        <View style={[styles.userView]}>
-                                                            <View style={[styles.leftView]}>
-                                                                <Text style={[styles.messageTitle, item.status == "Confirmed" ? styles.discussion : styles.review]}>{item.user} - {item.status}</Text>
-                                                            </View>
-                                                            <View style={[styles.rightView]}>
-                                                                <Text style={[styles.messageTimeTitle]}>10:05 am</Text>
-                                                            </View>
-                                                            <View style={[styles.lastView]}>
-                                                                <View style={[styles.statusView]}></View>
-                                                            </View>
-                                                        </View>
-
-                                                        <Text style={[styles.messageSubTitle,{marginBottom:2, marginTop:5}]}>{item.date}</Text>
-                                                        <Text style={[styles.messageSubTitle]}>{item.venue}</Text>
-                                                    </View>
-                                                </View>
-                                                <View style={styles.trBottomView}>
-                                                    <Text style={[styles.messageValues,]}>{item.message}</Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                        )
-                                    }else{
-                                        return (
-                                            <View key={index} style={[styles.tr]}>
-                                            <View style={styles.trTopView}>
-                                                <View style={styles.trImgView}>
-                                                    <Image source={require('../../../assets/icons/senderImages.png')} style={[styles.trAvatar]} resizeMode={"cover"}/>
-                                                </View>
-                                                    <View style={[styles.messageBox]}>
-                                                        <Text style={[styles.messageTitle, styles.review]}>{item.user} - {item.status}</Text>
-                                                        <Text numberOfLines={3} style={[styles.messageSubTitle,{marginBottom:2, marginTop:5}]}>{item.date}</Text>
-                                                        <Text style={[styles.messageSubTitle]}>{item.venue}</Text>
-                                                    </View>
-                                                </View>
-                                                <View style={styles.trBottomView}>
-                                                    <Text style={[styles.messageValues]}>{item.message}</Text>
-                                                    <TouchableOpacity onPress={() =>console.log('here')}>
-                                                        <View style={styles.LogInButton}>
-                                                            <Text style={styles.buttonText}>
-                                                                Write Review
-                                                            </Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </View>
-                                        )
-                                    }
-                                })
-                            }
-                        </View>
-                    </ScrollView>
-
-            {/*End of Main container*/}</View>
+            {/* Main Container End */}
+            </View>
         );
     }
+
+    // to go back on the previous screen use this function start
     onBackPress = () => {
-        this.props.navigation.navigate('PROFILE');
+        
+        this
+            .props
+            .navigation
+            .navigate('PROFILE');
     }
+    // to go back on the previous screen use this function end 
 }
-
 export default Inbox;
-
