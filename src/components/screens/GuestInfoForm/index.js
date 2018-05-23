@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, ScrollView, TextInput} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView, TextInput, FlatList} from 'react-native';
 import Image from 'react-native-remote-svg';
+import GuestFormRow from './GuestFormRow';
 import styles from './styles';
 
 export default class GuestInfoForm extends Component {
@@ -10,11 +11,13 @@ export default class GuestInfoForm extends Component {
         this.state = {
             guests: [
                 {
+                    key: 0,
                     genderRepresentation: 'Mr',
                     firstName: '',
                     lastName: ''
                 },
                 {
+                    key: 1,
                     genderRepresentation: 'Mrs',
                     firstName: '',
                     lastName: ''
@@ -23,45 +26,8 @@ export default class GuestInfoForm extends Component {
         };
     }
 
-    //Generates single row of the form
-    guestInfo = (index) => {
-        return (
-            <View style={styles.guestInfoWrapper} key={index}>
-                <Text style={styles.labelGuest}>Guest</Text>
-                <View style={styles.inputFieldsView}>
-                   <View style={styles.genderFlex}>
-                       <View style={[styles.gender, styles.spaceRight]}>
-                           <Text style={styles.genderText}>{this.state.guests[index].genderRepresentation}</Text>
-                       </View>
-                   </View>
-                    <View style={styles.firstNameFlex}>
-                        <TextInput
-                            style={[styles.formField, styles.spaceRight]}
-                            onChangeText={(firstName) => {
-                                let guests = Object.assign([], this.state.guests);
-                                guests[index].firstName = firstName;
-                                this.setState({guests});
-                            }}
-                            value={this.state.text}
-                            placeholder="First Name"
-                        />
-                    </View>
-                    <View style={styles.lastNameFlex}>
-                        <TextInput
-                            style={styles.formField}
-                            onChangeText={(lastName) => {
-                                let guests = Object.assign([], this.state.guests);
-                                guests[index].lastName = lastName;
-                                this.setState({guests});
-                            }}
-                            value={this.state.text}
-                            placeholder="Last Name"
-                        />
-                    </View>
-                </View>
-            </View>
-        )
-    }
+    // Keys for flatlist
+    _keyExtractor = (item, index) => item.key;
 
     render() {
         return (
@@ -84,13 +50,18 @@ export default class GuestInfoForm extends Component {
                             </View>
                         </View>
                         <View style={styles.form}>
-                            {
-                                this.state.guests.map((item, index) => this.guestInfo(index))
-                            }
+                            <FlatList
+                                style={styles.flatList}
+                                data={this.state.guests}
+                                keyExtractor={this._keyExtractor}
+                                renderItem={({ item, index }) => (
+                                    <GuestFormRow guest={item}/>
+                                )}
+                            />
                         </View>
                     </View>
                 </ScrollView>
-                
+
                 {/*Bottom Bar*/}
                 <View style={styles.floatingBar}>
                     <View style={styles.detailsView}>
