@@ -5,13 +5,11 @@ import { getTopHomes } from '../../../utils/requester';
 import DateAndGuestPicker from '../../organisms/DateAndGuestPicker';
 import SearchBar from '../../molecules/SearchBar';
 import SmallPropertyTile from '../../molecules/SmallPropertyTile';
+import { withNavigation } from 'react-navigation';
+
 import SplashScreen from 'react-native-smart-splash-screen';
 import Image from 'react-native-remote-svg';
 import styles from './styles';
-
-// TODO: move styles in separate file
-
-
 
 class Explore extends Component {
     static propTypes = {
@@ -25,15 +23,22 @@ class Explore extends Component {
             navigate: () => {}
         }
     }
+
     constructor(props) {
         super(props);
         this.onChangeHandler = this.onChangeHandler.bind(this);
+        this.updateData = this.updateData.bind(this);
+        this.gotoGuests = this.gotoGuests.bind(this);
+        this.gotoSearch = this.gotoSearch.bind(this);
         this.state = {
             search: '',
             checkInDate: 'Thu, 25 Jan',
             checkOutDate: 'Sat, 27 Jan',
             guests: 0,
-            topHomes: null
+            adults: 0,
+            children: 0,
+            infants: 0,
+            topHomes: []
         };
     }
 
@@ -74,11 +79,25 @@ class Explore extends Component {
         );
     }
 
+    updateData(data) {
+      console.log(data);
+      this.setState({ adults: data.adults, children: data.children, infants: data.infants});
+    }
+
+    gotoGuests() {
+      this.props.navigation.navigate('GuestsScreen', {adults: this.state.adults, children: this.state.children, infants: this.state.infants, updateData:this.updateData});
+    }
+
+    gotoSearch() {
+      this.props.navigation.navigate('PropertyScreen');
+    }
+
+
     // TODO: a renderHotels method does not exist yet because backend does not yet have an endpoint to request popular hotels
 
     render() {
         const {
-            search, checkInDate, checkOutDate, guests, topHomes
+            adults, children, infants, search, checkInDate, checkOutDate, guests, topHomes, onDatesSelect
         } = this.state;
 
         return (
@@ -104,22 +123,23 @@ class Explore extends Component {
                     <TouchableOpacity style={styles.btnSettings}><Image style={styles.btn_SettingImages} source={require('../../../../src/assets/svg/filters.svg')} /></TouchableOpacity>
                 </View>
 
-                    <TouchableOpacity style={styles.btnSearch}><Text style={styles.searchText}>Search</Text></TouchableOpacity>
-                {/* <ScrollView showsHorizontalScrollIndicator={false} style={{ width: '100%' }}>
-                    <DateAndGuestPicker checkInDate={checkInDate} checkOutDate={checkOutDate} guests={guests} />
-                    { topHomes ? this.renderHomes() : null }
-                </ScrollView> */}
-
-                {/* <TouchableOpacity onPress={() => {
-                    AsyncStorage.getAllKeys().then(keys => AsyncStorage.multiRemove(keys));
-                    this.props.navigation.navigate('Login');
-                }}
-                >
-                    <Text style={styles.text}>Log Out</Text>
-                </TouchableOpacity> */}
+                <TouchableOpacity style={styles.btnSearch}><Text style={styles.searchText}>Search</Text></TouchableOpacity>
+                {/*<ScrollView showsHorizontalScrollIndicator={false} style={{ width: '100%' }}>*/}
+                    {/*<DateAndGuestPicker*/}
+                        {/*checkInDate={checkInDate}*/}
+                        {/*checkOutDate={checkOutDate}*/}
+                        {/*adults={adults}*/}
+                        {/*children={children}*/}
+                        {/*infants={infants}*/}
+                        {/*gotoGuests={this.gotoGuests}*/}
+                        {/*gotoSearch={this.gotoSearch}*/}
+                        {/*onDatesSelect={onDatesSelect}*/}
+                    {/*/>*/}
+                    {/*{ topHomes ? this.renderHomes() : null }*/}
+                {/*</ScrollView>*/}
             </View>
         );
     }
 }
 
-export default Explore;
+export default withNavigation(Explore);

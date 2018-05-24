@@ -120,7 +120,6 @@ class Login extends Component {
                                 onChangeText={this.onChangeHandler('password')}
                                 placeholder="Password"
                                 placeholderTextColor="#fff"
-
                             />
                         </View>
 

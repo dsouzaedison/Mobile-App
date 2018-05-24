@@ -138,7 +138,8 @@ const styles = StyleSheet.create({
     backButton:{
         marginTop: 45,
         marginLeft: 15,
-        marginBottom: 0
+        alignSelf: 'baseline',
+        marginBottom: 15
     },
     backButtonIcon: {
         fontSize: 22
@@ -158,9 +159,8 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     btn_backImage:{
-        height: 50,
-        width: 50,
-        marginTop: 24,
+        height: 25,
+        width: 25,
         resizeMode: 'contain'
       },
 });
